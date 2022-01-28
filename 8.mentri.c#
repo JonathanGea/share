@@ -1,0 +1,129 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConsoleApplication2
+{
+    class Program
+    {
+        static void cetakPapan(int[,] papan)
+        {
+            Console.Clear();
+            for (int i = 0; i <= 7; i++)
+            {
+                for (int j = 0; j <= 7; j++)
+                {
+                    if (papan[i, j] < 10)
+                        Console.Write("[0" + papan[i, j] + "]");
+                    else
+                        Console.Write("[" + papan[i, j] + "]");
+                }
+                Console.WriteLine();
+            }
+        }
+
+        static int bolehJalan(int x, int y, int i, int[] xm, int[] ym, int[,] papan)
+        {
+            int x_next = x + xm[i];
+            int y_next = y + ym[i];
+            if (x_next>=0 && x_next<8 && y_next>=0 && y_next <8 && papan[x_next, y_next] == 0)
+            {
+                //diantara x0-7, y0-7, dan papan[x,y]==0
+                return 1;
+            } else
+            {
+                //tidak boleh jalan
+                return 0;
+            }
+        }
+
+        static void delay(int n)
+        {
+            for (int i = 0; i <= n; i++)
+            {
+                for (int j = 0; j <= n; j++) ;
+            }
+        }
+        static int cariSolusi(int x, int y, int lkh, int[]xm, int[]ym, int[,]papan)
+        {
+            //4.   If lkh>64 the return success
+            if (lkh == 65) return 1;
+            else
+            {
+                //langkah ke-5 kuda 8 kemungkinan langkah
+                for (int i = 0; i <= 7; i++)
+                {
+                    int x_next = x + xm[i];
+                    int y_next = y + ym[i];
+
+                    //cek apakah x_next dan y_next available/bolehJalan?
+                    if (bolehJalan(x, y, i, xm, ym, papan) == 1)
+                    {
+                        papan[x_next, y_next] = lkh;
+                        //cetakPapan(papan);
+                        //delay(10000);                        
+                        //Console.ReadKey();
+                        //langkah ke-6
+                        if (cariSolusi(x_next, y_next, lkh + 1, xm, ym, papan) == 1)
+                        {
+                            return 1;
+                        } else
+                        {
+                            papan[x_next, y_next] = 0;
+                        }
+                    }
+                }//end for i
+            }//end lkh==65
+            return 0;
+        }
+
+        static void Main(string[] args)
+        {
+            //1. Inisialisasi Papan
+            //2. Representasi Langkah Kuda
+            //3. Cari Solusi
+            //4.   If lkh>64 the return success
+            //5.      Mencari 8 prioritas langkah kuda      
+            //6.         Cari solusi langkah selanjutnya
+
+            //1. Inisialisasi Papan
+            int[,] papan = new int[8, 8];
+            //inisialisasi papan
+            for(int i = 0; i <= 7; i++)
+            {
+                for (int j = 0; j <= 7; j++)
+                {
+                    papan[i, j] = 0;
+                }
+            }
+            //cetak papan untuk cek
+            cetakPapan(papan);
+            // langkah 1 done
+
+            //2. Representasi Langkah Kuda
+            int[] xm = { 1, 2, 2, 1,-1,-2, -2, -1};
+            int[] ym = {-2,-1, 1, 2, 2, 1, -1, -2};
+
+            //langkah pertama
+            papan[0, 0] = 1;
+
+            cetakPapan(papan);
+            //langkah ke-2 done
+
+            //3. Cari Solusi
+            if (cariSolusi(0, 0, 2, xm, ym, papan) == 0)
+            {
+                Console.Write("Solusi tidak ditemukan");
+            } else
+            {
+                cetakPapan(papan);
+            }
+            //langkah ke-3 done
+
+            Console.ReadKey();
+
+        }//end void main
+    }//end class
+}
